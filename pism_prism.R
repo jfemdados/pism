@@ -19,17 +19,9 @@ faz_tudo <- function(nometabela,ntabela){
              col = `Grupo C`,
              into = c('nota_max_c','nota_min_c'),
              extra = 'merge') 
-   
-  if(ntabela == 1){
-    tabela1 <- tabela1%>% 
-      mutate(campus = case_when(curso == "ODONTOLOGIA (integral)" ~"GOVERNADOR VALADARES")) %>% 
-      fill(campus, .direction = 'up') %>% 
-      mutate(campus = case_when(is.na(campus) ~ "JUIZ DE FORA",
-                                TRUE ~campus)) %>% 
-      filter(!nota_min_c == "")
     
   }
-}
+
 
 tratamento_1 <- function(x){
   x%>% 
@@ -42,28 +34,35 @@ tratamento_1 <- function(x){
 
 
 
-#opening 18 --------------------------------------------------
+#opening --------------------------------------------------
 tables18<- tabulizer::extract_tables(pdf_16_18)
 
-#wrangling 18
+tables19<-tabulizer::extract_tables(pdf_17_19)
 
-initial_table<- faz_tudo(1) %>% 
+
+
+
+
+
+#wrangling ---------------------
+
+#tables 18
+initial_table<- faz_tudo(tables18, 1) %>% 
   tratamento_1()
         
-final_table<-faz_tudo(2) %>% 
-  bind_rows(faz_tudo(3)) %>% 
+final_table<-faz_tudo(tables18, 2) %>% 
+  bind_rows(faz_tudo(tables18, 3)) %>% 
   filter(!nota_min_c == "") %>% 
   mutate(campus = "JUIZ DE FORA") %>% 
   bind_rows(initial_table)
 
-#opening 19 --------------------------------------------
-tables19<-tabulizer::extract_tables(pdf_17_19)
+#tables 19
 
-#wrangling 19
-
-initial_table19 <- faz_tudo(tables19,1)
+initial_table19 <- faz_tudo(tables19,1) %>% 
+  tratamento_1()
 
 
+tabela <- data.frame(tables19[3])
 
 
 
