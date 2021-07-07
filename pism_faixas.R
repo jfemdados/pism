@@ -27,6 +27,30 @@ lista_pism_anos <- map(list(pdf15,pdf16,pdf17,pdf18,pdf19), leitora_pdf) %>%
   bind_rows() %>% 
   mutate(ano = 2015:2019)
 
+
+base2<- lista_pism_anos %>%
+  mutate(across(everything(), as.numeric)) %>% 
+  mutate(mais_metade = `de 120 a 160`+ `de 160 a 200` + `de 200 a 240`,
+         menos_metade = `de 0 a 40` + `de 40 a 80` + `de 80 a 120`) %>%
+  mutate(prop_menos = (menos_metade/(mais_metade+menos_metade))*100,
+         prop_mais = (mais_metade/(mais_metade+menos_metade))*100) %>% 
+  select(mais_metade, menos_metade, prop_mais, prop_menos, ano)
+
+base3 <- lista_pism_anos %>% 
+  mutate(across(everything(), as.numeric),
+         alto = `de 160 a 200` + `de 200 a 240`,
+         baixo = `de 0 a 40` + `de 40 a 80`,
+         medio = `de 80 a 120` + `de 120 a 160`)  
+  
+
 #exportar
 
 rio::export(lista_pism_anos, file = 'Desktop/pism/faixas.csv')
+rio::export(base2, file = 'Desktop/pism/faixas_mais_menos.csv')
+
+rio::export(base3,'Desktop/pism/3niveis.csv' )
+
+
+#36489e
+#a50c0c
+
